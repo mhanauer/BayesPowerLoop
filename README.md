@@ -19,15 +19,11 @@ library(psych)
 Try making it simple 
 We want to run a loop for a treatment effect that goes from .2 to .5.  So how do we do that first?
 ```{r}
-intercept = -0.4215
+intercept = 0
 #treat2v1 = .583
-treat3v1 = .815
-intervention  = c(rep(1,round(n*42/109,0)), rep(2,round(n*38/109,0)), rep(3,round(n*(29)/109,0)))
+n = 200
+intervention  = c(rep(1,round(n*.5,1)), rep(0,round(n*.5,0)))
 length(intervention)
-
-intervention1 = ifelse(intervention == 1, 1, 0)
-intervention2 = ifelse(intervention == 2,1,0)
-intervention3 = ifelse(intervention == 3, 1, 0)
 
 
 
@@ -35,20 +31,24 @@ intervention3 = ifelse(intervention == 3, 1, 0)
 ## Seem to only work when the [[i]] is a list, but cannot get each value a new list.  If I can figure out that, I might solve the problem.
 # What if we create 
 # I want for each set of data points 
+# I want to rep the intervention variable five times into a list
 treat2v1 =  list(.1,.2,.3,.4,.5)
 y = list()
+intervention_out = list()
+dat_out = list()
 for(i in 1:length(treate2v1)){
-  y[[i]] = intercept + intervention2*treat2v1[[i]] + intervention3*treat3v1 + rnorm(n =n, mean = 0, sd = 1)
+  y[[i]] = intercept + intervention*treat2v1[[i]]  + rnorm(n =n, mean = 0, sd = 1)
+  intervention_out[[i]]  = intervention
+  dat_out[[i]] = data.frame(y = y[[i]], intervention = intervention_out[[i]])
 }
-y
-treate2v1 =  list(.1,.2,.3,.4,.5)
-y = NULL
-for(i in 1:length(treate2v1)){
-  y[[i]] = treat2v1[[i]]
-}
+head(dat_out)
+## We have the y fixed, but now we need to bind it with each of the data sets.  But there is only one data set and there are five outcomes.
+## No only getting one set of interventions no y's
+dat_test = list(y = y, intervention = rep(intervention, 5))
+head(dat_test)
 
-y
-dat_bayes_power = data.frame(y = y, intervention2, intervention3)
+dat_bayes_power = data.frame(y = y, intervention2)
+head(dat_bayes_power)
 
 post_prior = MCMCregress(y ~ intervention2 + intervention3,data = dat_bayes_power)
 
